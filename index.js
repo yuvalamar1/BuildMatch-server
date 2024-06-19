@@ -9,7 +9,7 @@ app.use(express.json());
 
 // Basic route to handle GET requests to the root URL
 app.get("/", (req, res) => {
-  res.send("this is buildmatch backendd");
+  res.send("this is buildmatch backend");
 });
 
 // Another route to handle GET requests to /about
