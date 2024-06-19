@@ -1,0 +1,10 @@
+
+# Ignore package manager directories
+/node_modules/
+/vendor/
+
+# Ignore log files
+*.log
+
+# Ignore environment-specific files
+.env
