@@ -11,7 +11,9 @@
   "author": "Lin Sadon & Yuval Amar",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.19.2"
+    "bcrypt": "^5.1.1",
+    "express": "^4.19.2",
+    "mongoose": "^8.4.4"
   },
   "devDependencies": {
     "nodemon": "^3.1.3"
