@@ -37,6 +37,7 @@ export const registeradministator = async (req, res) => {
   }
 };
 
+// refacrot this function to check if the user is already in the database
 export const registerclient = async (req, res) => {
   try {
     const { firstName, lastName, email, password } = req.body;
@@ -51,10 +52,11 @@ export const registerclient = async (req, res) => {
 };
 
 /* LOGIN USER */
+// לסדר את הפונקציה הזו כך שתקבל את המשתנים מהקליינט ותחזיר תשובה תקינה
 export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
-    console.log(req.body);
+    console.log("email" + email + "password" + password);
     res.status(201).json("goodluck");
   } catch (err) {
     res.status(500).json({ error: err.message });

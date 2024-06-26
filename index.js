@@ -1,6 +1,9 @@
 import express from "express";
 import authRouter from "./routes/auth.js";
+import mongoose from "mongoose";
+import cors from "cors";
 const app = express();
+app.use(cors());
 const PORT = process.env.PORT || 3000;
 
 // Middleware to parse JSON requests
