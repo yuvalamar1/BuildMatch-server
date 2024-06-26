@@ -26,12 +26,18 @@ export const registeradministator1 = async (req, res) => {
 /* REGISTER USER */
 export const registeradministator = async (req, res) => {
   try {
-    const { companyname, phoneNumber, email, password } = req.body;
+    const { companyname: companyName, phoneNumber, email, password } = req.body;
     console.log(req.body);
     const salt = await bcrypt.genSalt();
     const passwordHash = await bcrypt.hash(password, salt);
-    console.log("passwordHash", passwordHash);
-    res.status(201).json("goodluck");
+    const newAdministrator = new Administrator({
+      companyName,
+      phoneNumber,
+      email,
+      password: passwordHash,
+    });
+    const savedUser = await newAdministrator.save();
+    res.status(201).json(savedUser);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
