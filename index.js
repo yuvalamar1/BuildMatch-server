@@ -21,6 +21,7 @@ const storage = multer.diskStorage({
 });
 
 const upload = multer({ storage: storage });
+app.use("/uploads", express.static("uploads"));
 
 // Middleware to parse JSON requests
 app.use(express.json());
@@ -28,8 +29,8 @@ app.use("/auth", authRouter);
 
 /////////////////////////////////////////////////////
 app.post("/upload", upload.single("image"), (req, res) => {
-  console.log(req.body);
-  res.send("Hello");
+  console.log(req.file.path);
+  res.send(req.file.path);
 });
 
 /////////////////////////////////////////////////////
