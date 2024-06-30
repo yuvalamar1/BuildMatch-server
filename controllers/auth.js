@@ -26,7 +26,7 @@ export const registeradministator1 = async (req, res) => {
 /* REGISTER USER */
 export const registeradministator = async (req, res) => {
   try {
-    const { companyname: companyName, phoneNumber, email, password } = req.body;
+    const { companyName, phoneNumber, email, password } = req.body;
     console.log(req.body);
     const salt = await bcrypt.genSalt();
     const passwordHash = await bcrypt.hash(password, salt);
