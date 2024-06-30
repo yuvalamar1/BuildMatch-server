@@ -1,27 +1,6 @@
 import bcrypt from "bcrypt";
 import Administrator from "../models/Administrator.js";
-
-/* REGISTER USER */
-export const registeradministator1 = async (req, res) => {
-  console.log("asdasd");
-  try {
-    const { companyname, phoneNumber, email, password } = req.body;
-
-    const salt = await bcrypt.genSalt();
-    const passwordHash = await bcrypt.hash(password, salt);
-
-    const newAdministrator = new Administrator({
-      companyname,
-      phoneNumber,
-      email,
-      password: passwordHash,
-    });
-    const savedUser = await newAdministrator.save();
-    res.status(201).json(savedUser);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-};
+import Client from "../models/Client.js";
 
 /* REGISTER USER */
 export const registeradministator = async (req, res) => {
@@ -50,8 +29,16 @@ export const registerclient = async (req, res) => {
     console.log(req.body);
     const salt = await bcrypt.genSalt();
     const passwordHash = await bcrypt.hash(password, salt);
+    const newClient = new Client({
+      firstName,
+      lastName,
+      email,
+      password: passwordHash,
+    });
+    console.log("newClient", newClient);
+    const savedUser = await newClient.save();
     console.log("passwordHash", passwordHash);
-    res.status(201).json("goodluck");
+    res.status(201).json(savedUser);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -62,8 +49,27 @@ export const registerclient = async (req, res) => {
 export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
-    console.log("email" + email + "password" + password);
-    res.status(201).json("goodluck");
+    const AdminUser = await Administrator.findOne({ email });
+    const clientUser = await Client.findOne({ email });
+    if (!AdminUser && !clientUser) {
+      return res.status(400).json("User not found");
+    }
+
+    let validPassword = false;
+
+    if (AdminUser) {
+      validPassword = await bcrypt.compare(password, AdminUser.password);
+    }
+
+    if (!validPassword && clientUser) {
+      validPassword = await bcrypt.compare(password, clientUser.password);
+    }
+
+    if (!validPassword) {
+      return res.status(400).json("Wrong password");
+    }
+
+    res.status(201).json("login successfull");
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
