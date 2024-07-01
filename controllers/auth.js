@@ -56,20 +56,26 @@ export const login = async (req, res) => {
     }
 
     let validPassword = false;
+    let returnname = "";
+    let userid = "";
 
     if (AdminUser) {
       validPassword = await bcrypt.compare(password, AdminUser.password);
+      returnname = AdminUser.companyName;
+      userid = AdminUser._id;
     }
 
     if (!validPassword && clientUser) {
       validPassword = await bcrypt.compare(password, clientUser.password);
+      returnname = clientUser.firstName + " " + clientUser.lastName;
+      userid = clientUser._id;
     }
 
     if (!validPassword) {
       return res.status(400).json("Wrong password");
     }
 
-    res.status(201).json("login successfull");
+    res.status(201).json({ username: returnname, userid: userid });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
