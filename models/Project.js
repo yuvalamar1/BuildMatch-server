@@ -23,11 +23,9 @@ const projectSchema = new mongoose.Schema({
   },
   zoningImagePath: {
     type: String,
-    required: true,
   },
   architectualrenderingImagePath: {
     type: String,
-    required: true,
   },
 
   plots: [
