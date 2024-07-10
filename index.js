@@ -31,6 +31,7 @@ app.use("/projects", projectrouter);
 
 /////////////////////////////////////////////////////
 app.post("/upload", upload.single("image"), (req, res) => {
+  console.log(req);
   console.log(req.file.path);
   res.send(req.file.path);
 });
