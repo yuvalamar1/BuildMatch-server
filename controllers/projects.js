@@ -49,13 +49,15 @@ export const createproject = [
       }
       if (req.files.zoningImage) {
         const tempPath = req.files.zoningImage[0].path;
-        const targetPath = `${projectDir}/zoning`;
+        const targetPath = `${projectDir}/zoning.${path.extname(tempPath)}`;
         fs.renameSync(tempPath, targetPath);
         savedProject.zoningImagePath = targetPath;
       }
       if (req.files.architecturalRenderingImage) {
         const tempPath = req.files.architecturalRenderingImage[0].path;
-        const targetPath = `${projectDir}/architecturalRendering`;
+        const targetPath = `${projectDir}/architecturalRendering.${path.extname(
+          tempPath
+        )}`;
         fs.renameSync(tempPath, targetPath);
         savedProject.architectualrenderingImagePath = targetPath;
       }
