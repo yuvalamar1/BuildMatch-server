@@ -29,11 +29,13 @@ export const createproject = [
     try {
       const { projectName, administrator, city, deadline, description, plots } =
         req.body;
+      const date = new Date(deadline);
+      date.setUTCHours(0, 0, 0, 0);
       const newProject = new Project({
         projectName,
         administrator,
         city,
-        deadline,
+        deadline: date,
         description,
       });
       const savedProject = await newProject.save();

@@ -63,3 +63,13 @@ export const updateuser = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
+export const getadministratornamebyid = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const user = await Administrator.findOne({ _id: id });
+    res.status(200).json(user.companyName);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
