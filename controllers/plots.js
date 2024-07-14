@@ -34,3 +34,13 @@ export const createplotfromproject = async (projectId, arr, res) => {
     throw new Error(err.message);
   }
 };
+
+export const getplotsbyprojectid = async (req, res) => {
+  try {
+    const { projectId } = req.params;
+    const plots = await Plot.find({ projectId });
+    res.status(200).json(plots);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
