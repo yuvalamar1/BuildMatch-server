@@ -2,6 +2,7 @@ import express from "express";
 import authRouter from "./routes/auth.js";
 import projectrouter from "./routes/projects.js";
 import userRouter from "./routes/users.js";
+import plotrouter from "./routes/plots.js";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
 import cors from "cors";
@@ -30,6 +31,7 @@ app.use(express.json());
 app.use("/auth", authRouter);
 app.use("/projects", projectrouter);
 app.use("/users", userRouter);
+app.use("/plots", plotrouter);
 
 /////////////////////////////////////////////////////
 app.post("/upload", upload.single("image"), (req, res) => {
