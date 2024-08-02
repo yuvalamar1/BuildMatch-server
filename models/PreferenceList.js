@@ -25,7 +25,7 @@ const preferenceSchema = new mongoose.Schema({
         },
       },
     ],
-    _id: false, // This prevents Mongoose from adding `_id` to the subdocuments
+    _id: false,
   },
 });
 

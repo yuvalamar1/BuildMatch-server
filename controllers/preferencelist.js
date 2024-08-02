@@ -2,12 +2,13 @@ import PreferenceList from "../models/PreferenceList.js";
 
 /* get all preferences */
 export const getprojetpreferences = async (req, res) => {
-  console.log("getprojetpreferences");
-  console.log(req.params);
   const { projectId, clientId } = req.params;
   try {
-    const preferences = await PreferenceList.find({ projectId, clientId });
-    res.status(200).json(preferences);
+    const preferences = await PreferenceList.findOne({ projectId, clientId });
+    if (!preferences) {
+      return res.status(404).json({ message: "Preferences not found" });
+    }
+    res.status(200).json(preferences.preferences);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
