@@ -2,6 +2,8 @@ import PreferenceList from "../models/PreferenceList.js";
 
 /* get all preferences */
 export const getprojetpreferences = async (req, res) => {
+  console.log("getprojetpreferences");
+  console.log(req.params);
   const { projectId, clientId } = req.params;
   try {
     const preferences = await PreferenceList.find({ projectId, clientId });
@@ -12,8 +14,6 @@ export const getprojetpreferences = async (req, res) => {
 };
 
 export const createpreference = async (req, res) => {
-  console.log("req.body");
-  console.log(req.body);
   try {
     const { clientid, projectId, preferences } = req.body;
     const newPreference = new PreferenceList({

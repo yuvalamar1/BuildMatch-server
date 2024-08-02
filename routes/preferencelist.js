@@ -6,7 +6,10 @@ import {
 
 const preferencerouter = express.Router();
 
-preferencerouter.get("/getpreference", getprojetpreferences);
+preferencerouter.get(
+  "/getpreference/:projectId/:clientid",
+  getprojetpreferences
+);
 preferencerouter.post("/createpreference", createpreference);
 
 export default preferencerouter;
