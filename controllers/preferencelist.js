@@ -14,6 +14,24 @@ export const getprojetpreferences = async (req, res) => {
   }
 };
 
+export const getsubmittedproject = async (req, res) => {
+  const { clientid } = req.params;
+  try {
+    const submittedlist = await PreferenceList.find({ clientid });
+    if (!submittedlist) {
+      return res.status(204).json({ message: "registered project not found" });
+    }
+    let templist = [];
+    submittedlist.map((item) => {
+      templist.push(item.projectId);
+    });
+    console.log(templist);
+    res.status(200).json(templist);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
 export const createpreference = async (req, res) => {
   try {
     const { clientid, projectId, preferences } = req.body;
