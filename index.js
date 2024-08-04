@@ -11,8 +11,8 @@ import multer from "multer";
 
 const app = express();
 app.use(cors());
-const PORT = process.env.PORT || 3000;
 dotenv.config();
+const PORT = process.env.PORT || 3000;
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {

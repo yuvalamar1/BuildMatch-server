@@ -1,6 +1,8 @@
 import bcrypt from "bcrypt";
+import crypto from "crypto";
 import Administrator from "../models/Administrator.js";
 import Client from "../models/Client.js";
+import sendemail from "../services/sendingemail.js";
 
 /* REGISTER USER */
 export const registeradministator = async (req, res) => {
@@ -81,6 +83,33 @@ export const login = async (req, res) => {
     res
       .status(201)
       .json({ username: returnname, userid: userid, usertype: usertype });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+export const restpassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+    const AdminUser = await Administrator.findOne({ email });
+    const clientUser = await Client.findOne({ email });
+    if (!AdminUser && !clientUser) {
+      return res.status(400).json("User not found");
+    }
+    const randomPassword = crypto.randomBytes(8).toString("hex");
+    const salt = await bcrypt.genSalt();
+    const passwordHash = await bcrypt.hash(randomPassword, salt);
+    if (AdminUser) {
+      await Administrator.findOneAndUpdate(
+        { email },
+        { password: passwordHash }
+      );
+    }
+    if (clientUser) {
+      await Client.findOneAndUpdate({ email }, { password: passwordHash });
+    }
+    await sendemail(email, randomPassword);
+    res.status(200).json("email sent");
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
