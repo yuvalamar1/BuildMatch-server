@@ -4,10 +4,12 @@ import projectrouter from "./routes/projects.js";
 import userRouter from "./routes/users.js";
 import plotrouter from "./routes/plots.js";
 import preferencerouter from "./routes/preferencelist.js";
+import firstcheck from "./services/dailycheck.js";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
 import cors from "cors";
 import multer from "multer";
+import cron from "node-cron";
 
 const app = express();
 app.use(cors());
@@ -35,6 +37,11 @@ app.use("/users", userRouter);
 app.use("/plots", plotrouter);
 app.use("/preferences", preferencerouter);
 
+// Schedule the cron job to run at 00:01 every day
+cron.schedule("01 00 * * *", () => {
+  firstcheck();
+});
+
 /////////////////////////////////////////////////////
 app.post("/upload", upload.single("image"), (req, res) => {
   console.log(req);
@@ -49,7 +56,7 @@ mongoose
   .then(() => {
     console.log("Connected to MongoDB");
     app.listen(PORT, () => {
-      console.log(`Server is running on http://localhost:${PORT}`);
+      console.log(`Server is running on render or in http://localhost:${PORT}`);
     });
   })
 

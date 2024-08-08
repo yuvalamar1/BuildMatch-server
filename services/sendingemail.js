@@ -5,8 +5,6 @@ dotenv.config();
 const PASSWORD = process.env.EMAIL_PASSWORD;
 const SYSTEMEMAIL = process.env.SYSTEM_EMAIL;
 const sendemail = async (email, password = "0") => {
-  console.log("email", email);
-  console.log(PASSWORD);
   try {
     // Set up email transporter
     const transporter = nodemailer.createTransport({
