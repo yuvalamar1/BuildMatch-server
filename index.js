@@ -43,6 +43,11 @@ cron.schedule("16 15 * * *", () => {
   firstcheck();
 });
 
+app.get("/dailycheck", (req, res) => {
+  firstcheck();
+  res.send("Daily check started");
+});
+
 /////////////////////////////////////////////////////
 app.post("/upload", upload.single("image"), (req, res) => {
   console.log(req);
