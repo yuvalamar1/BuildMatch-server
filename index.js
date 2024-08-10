@@ -45,13 +45,17 @@ app.use("/preferences", preferencerouter);
 
 app.get("/dailycheck", (req, res) => {
   try {
-    const clientIp = req.ip;
-    console.log(`Daily check started by IP: ${clientIp}`);
-    firstcheck();
+    const clientIp = req.headers["user-agent"];
+    console.log(`Daily check started by agent: ${clientIp}`);
+    // firstcheck();
     res.status(200).json("Daily check started");
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
+});
+
+app.get("/keepalive", (req, res) => {
+  res.status(200).json("Server is alive");
 });
 
 /////////////////////////////////////////////////////
