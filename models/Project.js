@@ -34,6 +34,15 @@ const projectSchema = new mongoose.Schema({
       ref: "Plot",
     },
   ],
+
+  availablePlaces: {
+    type: Number,
+  },
+
+  isAvailable: {
+    type: Boolean,
+    default: true,
+  },
 });
 
 const Project = mongoose.model("Project", projectSchema);

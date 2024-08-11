@@ -1,4 +1,5 @@
 import PreferenceList from "../models/PreferenceList.js";
+import Project from "../models/Project.js";
 
 /* get all preferences */
 export const getprojetpreferences = async (req, res) => {
@@ -41,7 +42,11 @@ export const createpreference = async (req, res) => {
       { preferences }, // Data to update
       { new: true, upsert: true } // Options: new=true returns the updated document, upsert=true creates the document if it doesn't exist
     );
-
+    const tmp = await Project.findById(projectId);
+    const updatedAvailablePlaces = tmp.availablePlaces - 1;
+    await Project.findByIdAndUpdate(projectId, {
+      availablePlaces: updatedAvailablePlaces,
+    });
     res.status(200).json(updatedPreference);
   } catch (err) {
     res.status(500).json({ error: err.message });

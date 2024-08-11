@@ -37,6 +37,7 @@ export const createproject = [
         city,
         deadline: date,
         description,
+        availablePlaces: JSON.parse(plots).length,
       });
       const savedProject = await newProject.save();
       // create plot from project
