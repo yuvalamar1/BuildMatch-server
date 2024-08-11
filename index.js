@@ -43,11 +43,12 @@ app.use("/preferences", preferencerouter);
 //   firstcheck();
 // });
 
-app.get("/dailycheck", (req, res) => {
+app.get("/dailycheck", async (req, res) => {
   try {
+    await new Promise((resolve) => setTimeout(resolve, 3000));
     const clientIp = req.headers["user-agent"];
     console.log(`Daily check started by agent: ${clientIp}`);
-    // firstcheck();
+    firstcheck();
     res.status(200).json("Daily check started");
   } catch (err) {
     res.status(500).json({ error: err.message });
