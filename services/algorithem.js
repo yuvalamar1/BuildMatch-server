@@ -34,7 +34,7 @@ function readExcelFile(filePath) {
 }
 
 const rankMaximalMatching = (plotslist, preferencesList) => {
-  const M = new Map(); // Start with an empty matching
+  let M = new Map(); // Start with an empty matching
   let familylist = [];
   let edges = [];
   let flag = true;
@@ -49,21 +49,14 @@ const rankMaximalMatching = (plotslist, preferencesList) => {
       M.set(preferences.data[0], preferences["family name"]);
     }
   });
+  console.log("first matching");
   console.log(M);
 
   //run the algorithm for i to plotslist.length
   //   for (let i = 0; i <= plotslist.length; i++) {
-  for (let i = 0; i < 3; i++) {
+  for (let i = 0; i < 4; i++) {
     //create edges with rank i
     preferencesList.forEach((preferences) => {
-      //check if the plot is not in the matching and the family name is not in the matching
-      //   if (
-      //     (!M.has(preferences.data[i]) &&
-      //       !Array.from(M.values()).includes(preferences["familyName"]) &&
-      //       !preferences.data[i] === undefined) ||
-      //     i === 0
-      //   )
-      let tmp = U_i.has(preferences.data[i]);
       if (
         !U_i.has(preferences.data[i]) &&
         !O_i.has(preferences.data[i]) &&
@@ -77,10 +70,18 @@ const rankMaximalMatching = (plotslist, preferencesList) => {
         });
       }
     });
+    console.log("edges in iteration " + i);
     console.log(edges);
+    //find maximal matching
+    M = findMaximalMatching(M, edges); ///////////////////////////////////////////////////////////
+    console.log("maximal matching in iteration " + i);
+    console.log(M);
+    E_i = new Set();
+    O_i = new Set();
+    U_i = new Set();
     // Partition nodes into E_i, O_i, U_i
     for (let j = 0; j < edges.length; j++) {
-      const valueExists = Array.from(M.values()).includes(edges[j].familyName);
+      const valueExists = Array.from(M.values()).includes(edges[j].familyName); //check if the family is already matched
       if (!valueExists) {
         let index = j;
         while (true) {
@@ -114,53 +115,166 @@ const rankMaximalMatching = (plotslist, preferencesList) => {
         U_i.add(family);
       }
     });
-
+    console.log("E_i, O_i, U_i in iteration " + i);
     console.log(E_i);
     console.log(O_i);
     console.log(U_i);
   }
 };
 
-// function partitionNodes(M, edges) {
-//   const E_i = new Set();
-//   const O_i = new Set();
-//   const U_i = new Set();
+function findMaximalMatching(matchings, edges) {
+  let newMatchings = new Map(matchings); // Copy the existing matchings
+  for (let edge of edges) {
+    if (edge.plot === 4) {
+      console.log("edge 4");
+    }
+    // Iterate over the edges
+    if (!newMatchings.has(edge.plot)) {
+      // If the plot is not already matched
+      const valueExists = Array.from(newMatchings.values()).includes(
+        edge.familyName
+      ); // Check if the family is already matched
+      if (!valueExists) {
+        newMatchings.set(edge.familyName, edge.plot); // if plot and family are not matched, add them to the matching
+        break;
+      }
+      let altpath = findaugmentingpath(newMatchings, edges, edge.plot); // Find an augmenting path
+      if (altpath.length > 0) {
+        for (let node of altpath) {
+          if (newMatchings.has(node)) {
+            newMatchings.delete(node);
+          }
+        }
+        for (let i = 0; i < altpath.length - 1; i += 2) {
+          newMatchings.set(altpath[i], altpath[i + 1]);
+        }
+        // return newMatchings;
+      }
+    }
+  }
+  return newMatchings;
+}
 
-//   const visited = new Set();
+function findaugmentingpath(matchings, edges, start) {
+  let visited = [];
+  let neighbors = [];
+  let families = new Set();
+  let plots = new Set();
+  let exposenodes = new Set();
+  let nodesinmatch = [];
 
-//   const bfs = (family, even) => {
-//     const queue = [[family, even]];
-//     visited.add(family);
+  // Create a set of all families and plots
+  edges.forEach((edge) => {
+    families.add(edge.familyName);
+    plots.add(edge.plot);
+  });
 
-//     while (queue.length) {
-//       const [currentFamily, isEven] = queue.shift();
+  // Create a list of nodes in the matching
+  matchings.forEach((value, key) => {
+    nodesinmatch.push(key);
+    nodesinmatch.push(value);
+  });
 
-//       for (const edge of edges || []) {
-//         const plot = edge.plot;
-//         if (!M.has(plot)) {
-//           if (isEven) {
-//             E_i.add(plot);
-//           } else {
-//             O_i.add(plot);
-//           }
-//         }
+  // Create a set of nodes that are not in the matching
+  edges.forEach((edge) => {
+    if (!nodesinmatch.includes(edge.familyName)) {
+      exposenodes.add(edge.familyName);
+    }
+    if (!nodesinmatch.includes(edge.plot)) {
+      exposenodes.add(edge.plot);
+    }
+  });
 
-//         if (!visited.has(plot)) {
-//           visited.add(plot);
-//           queue.push([plot, !isEven]);
-//         }
-//       }
-//     }
-//   };
+  // Find the neighbors (family type) of the start node, the first node should be plot type
+  edges.forEach((edge) => {
+    if (edge.plot === start) {
+      neighbors.push(edge.familyName);
+    }
+  });
+  // Add the start node to the visited list
+  visited.push(start);
 
-//   edges.forEach((_, family) => {
-//     if (!visited.has(family)) {
-//       bfs(family, true);
-//     }
-//   });
-// }
-// Example usage
+  for (let neighbor of neighbors) {
+    if (nodesinmatch.includes(neighbor)) {
+      // If the neighbor (family) is in the matching
+      //////////////////////////////////////////
+      let addvisit = addtoaugmentingpath(matchings, edges, neighbor, visited); // Add the augmenting path to the visited list
+      for (let node of addvisit) {
+        visited.push(node);
+      }
+      console.log("visited in findaugmentingpath");
+      console.log(visited);
+      break;
+      //////////////////////////////////////////
+    }
+  }
+  return visited;
+}
 
+//this function get a family type node in the matching and try to find an augmenting path
+function addtoaugmentingpath(matchings, edges, start, visited) {
+  //start is a family node
+  let newvisited = [];
+  let hismatch;
+  newvisited.push(start);
+
+  // Find the matching node for the start node
+  for (let [key, value] of matchings) {
+    if (value === start) {
+      hismatch = key;
+      newvisited.push(key);
+      break;
+    }
+  }
+  // Find the neighbors {family type} of the matching node, the neighbors should be plot type
+  let neighbors = [];
+  for (let edge of edges) {
+    if (edge.plot === hismatch) {
+      //his match is a plot node
+      neighbors.push(edge.familyName);
+    }
+  }
+  // check if the neighbors are in the visited list and if the neighbor is in the matching, if so run the function again from the neighbor
+  for (let neighbor of neighbors) {
+    let flag = false;
+    if (!visited.includes(neighbor) && !newvisited.includes(neighbor)) {
+      for (let [key, value] of matchings) {
+        if (flag) {
+          break;
+        }
+        if (value === neighbor) {
+          let addvisit = addtoaugmentingpath(
+            matchings,
+            edges,
+            neighbor,
+            newvisited
+          ); // Add the augmenting path to the visited list
+          if (addvisit.length === 0) {
+            flag = true;
+            continue;
+          }
+          for (let node of addvisit) {
+            newvisited.push(node);
+          }
+          //   newvisited.push(
+          //     addtoaugmentingpath(matchings, edges, value, newvisited)
+          //   );
+          break;
+        }
+      }
+      if (flag) {
+        continue;
+      }
+      if (!newvisited.includes(neighbor)) {
+        newvisited.push(neighbor);
+      }
+      return newvisited;
+    }
+  }
+  return [];
+}
+
+// Main code
 const filePath = "./סימולציה ראשונה קמה_1.xlsx"; // Replace with the path to your Excel file
 const data = readExcelFile(filePath);
 const newplots = [];
