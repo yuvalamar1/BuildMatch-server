@@ -10,16 +10,23 @@ export const getDailyCheck = async (req, res) => {
       deadline: { $lt: new Date() },
       availablePlaces: 0,
     });
-    const projects = await Project.findOneAndUpdate(
-      {
-        isAvailable: true,
-        deadline: { $lt: new Date() },
-      },
-      { isAvailable: false }
-    );
+    // Find all projects that need to be updated
+    const projects = await Project.find({
+      isAvailable: true,
+      deadline: { $lt: new Date() },
+    });
+
     if (projects.length === 0 && projecttoalgo.length === 0) {
       return res.status(204).json({ message: "No projects to check" });
     }
+
+    // Update the projects
+    await Project.updateMany(
+      {
+        _id: { $in: projects.map((project) => project._id) },
+      },
+      { isAvailable: false }
+    );
     // Send email to the administrator if the project deadline has passed and there are available places
     projects.map(async (project) => {
       if (!projecttoalgo.includes(project)) {

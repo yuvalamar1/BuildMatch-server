@@ -41,7 +41,7 @@ const sendemail = async (email, type, password = "0") => {
             from: SYSTEMEMAIL, // Replace with your email
             to: email,
             subject: "change deadline",
-            text: "please change the deadline",
+            text: password,
           };
         }
         break;
