@@ -108,7 +108,7 @@ export const restpassword = async (req, res) => {
     if (clientUser) {
       await Client.findOneAndUpdate({ email }, { password: passwordHash });
     }
-    await sendemail(email, randomPassword);
+    await sendemail(email, 1, randomPassword);
     res.status(200).json("email sent");
   } catch (err) {
     res.status(500).json({ error: err.message });

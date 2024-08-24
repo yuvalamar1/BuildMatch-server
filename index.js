@@ -4,7 +4,7 @@ import projectrouter from "./routes/projects.js";
 import userRouter from "./routes/users.js";
 import plotrouter from "./routes/plots.js";
 import preferencerouter from "./routes/preferencelist.js";
-import firstcheck from "./services/dailycheck.js";
+import firstcheck, { getDailyCheck } from "./services/dailycheck.js";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
 import cors from "cors";
@@ -43,17 +43,7 @@ app.use("/preferences", preferencerouter);
 //   firstcheck();
 // });
 
-app.get("/dailycheck", async (req, res) => {
-  try {
-    await new Promise((resolve) => setTimeout(resolve, 3000));
-    const clientIp = req.headers["user-agent"];
-    console.log(`Daily check started by agent: ${clientIp}`);
-    firstcheck();
-    res.status(200).json("Daily check started");
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
+app.get("/dailycheck", getDailyCheck);
 
 app.get("/keepalive", (req, res) => {
   res.status(200).json("Server is alive");

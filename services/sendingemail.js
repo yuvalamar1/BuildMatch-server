@@ -4,7 +4,11 @@ import dotenv from "dotenv";
 dotenv.config();
 const PASSWORD = process.env.EMAIL_PASSWORD;
 const SYSTEMEMAIL = process.env.SYSTEM_EMAIL;
-const sendemail = async (email, password = "0") => {
+
+//type 1: send email with reset password
+//type 2: send email to administator for changing deadline
+//type 3: send email with the matchings
+const sendemail = async (email, type, password = "0") => {
   try {
     // Set up email transporter
     const transporter = nodemailer.createTransport({
@@ -18,13 +22,42 @@ const sendemail = async (email, password = "0") => {
       },
     });
 
+    let mailOptions;
     // Email options
-    const mailOptions = {
-      from: SYSTEMEMAIL, // Replace with your email
-      to: email,
-      subject: "reset password",
-      text: "your new password is: " + password,
-    };
+    switch (type) {
+      case 1:
+        {
+          mailOptions = {
+            from: SYSTEMEMAIL, // Replace with your email
+            to: email,
+            subject: "reset password",
+            text: "your new password is: " + password,
+          };
+        }
+        break;
+      case 2:
+        {
+          mailOptions = {
+            from: SYSTEMEMAIL, // Replace with your email
+            to: email,
+            subject: "change deadline",
+            text: "please change the deadline",
+          };
+        }
+        break;
+      case 3:
+        {
+          mailOptions = {
+            from: SYSTEMEMAIL, // Replace with your email
+            to: email,
+            subject: "matching",
+            text: "you have a matching",
+          };
+        }
+        break;
+      default:
+        throw new Error("Invalid email type");
+    }
 
     // Send the email
     await transporter.sendMail(mailOptions);
