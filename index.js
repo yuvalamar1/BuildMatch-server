@@ -39,7 +39,7 @@ app.use("/preferences", preferencerouter);
 
 // Schedule the cron job to run at 00:01 every day
 
-cron.schedule("55 21 * * *", () => {
+cron.schedule("05 22 * * *", () => {
   console.log("Running the daily check");
   firstcheck();
 });
