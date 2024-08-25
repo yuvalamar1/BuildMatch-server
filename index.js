@@ -48,6 +48,7 @@ app.get("/dailycheck", getDailyCheck);
 
 app.get("/keepalive", (req, res) => {
   res.status(200).json("Server is alive");
+  firstcheck();
 });
 
 /////////////////////////////////////////////////////
