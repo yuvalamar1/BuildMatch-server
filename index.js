@@ -38,10 +38,11 @@ app.use("/plots", plotrouter);
 app.use("/preferences", preferencerouter);
 
 // Schedule the cron job to run at 00:01 every day
-// cron.schedule("16 15 * * *", () => {
-//   console.log("Running the daily check");
-//   firstcheck();
-// });
+
+cron.schedule("55 21 * * *", () => {
+  console.log("Running the daily check");
+  firstcheck();
+});
 
 app.get("/dailycheck", getDailyCheck);
 

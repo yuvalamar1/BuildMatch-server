@@ -48,7 +48,7 @@ export const getDailyCheck = async (req, res) => {
 
 const firstcheck = async () => {
   try {
-    await sendemail("yuvalamar15@gmail.com", "898989");
+    await sendemail("yuvalamar15@gmail.com", 1, "898989");
   } catch (err) {
     console.log(err);
   }
