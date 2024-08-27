@@ -1,6 +1,8 @@
 import pandas as pd
 import random
 from collections import deque
+import sys
+import json
 
 
 class BipartiteGraph:
@@ -227,7 +229,12 @@ def readfile():
 #            ("eee", [2, 1, 3, 6, 4, 5]), ("fff", [6])]
 # plots = [1, 2, 3, 4, 5, 6]
 
-preferences,plots = readfile()
+#preferences,plots = readfile()
+input_data = json.loads(sys.stdin.read())
+plots = set()
+for _,plot in input_data:
+    plots.update(plot)
+preferences = input_data
 runalgorithemondata(preferences,plots)
 createrandommatc(preferences,plots)
 

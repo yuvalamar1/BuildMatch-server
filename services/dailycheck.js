@@ -1,4 +1,5 @@
 import { isValidObjectId } from "mongoose";
+import { spawn } from "child_process";
 import Project from "../models/Project.js";
 import Administrator from "../models/Administrator.js";
 import PreferenceList from "../models/PreferenceList.js";
@@ -47,10 +48,17 @@ export const getDailyCheck = async (req, res) => {
         );
       }
     });
-    /////////////////////////////////////////////////////////////////////////
     //format data to the algorithm ({clientid, [plotid, plotid, plotid]})
     const formatteddata = await formatthedata(projecttoalgo);
-    console.log(formatteddata);
+    ///////////////////////////////////////////////////////////////////////
+    // Execute the Python script
+    executePythonScript(formatteddata)
+      .then((result) => {
+        console.log("Python script result:", result);
+      })
+      .catch((error) => {
+        console.error("Error executing Python script:", error);
+      });
     /////////////////////////////////////////////////////////////////////////
     res.status(200).json(projects);
   } catch (err) {
@@ -76,6 +84,38 @@ const formatthedata = async (projecttoalgo) => {
   }
 
   return formatteddata;
+};
+
+const executePythonScript = async (formatteddata) => {
+  return new Promise((resolve, reject) => {
+    // Spawn the Python process
+    const pythonProcess = spawn("python3", ["thirdchance.py"]);
+
+    // Pass the formatted data to the Python process via stdin
+    pythonProcess.stdin.write(JSON.stringify(formatteddata));
+    pythonProcess.stdin.end();
+
+    // Capture the output from the Python script
+    let result = "";
+    pythonProcess.stdout.on("data", (data) => {
+      result += data.toString();
+    });
+
+    // Handle errors
+    pythonProcess.stderr.on("data", (data) => {
+      console.error(`Error: ${data}`);
+      reject(data.toString());
+    });
+
+    // Resolve the promise with the result when the process exits
+    pythonProcess.on("close", (code) => {
+      if (code === 0) {
+        resolve(JSON.parse(result));
+      } else {
+        reject(`Process exited with code ${code}`);
+      }
+    });
+  });
 };
 
 export const firstcheck = async () => {
