@@ -40,11 +40,11 @@ export const getDailyCheck = async (req, res) => {
         const administrator = await Administrator.findById(
           project.administrator
         );
-        // await sendemail(
-        //   administrator.email,
-        //   2,
-        //   `The ${project.projectName} project deadline has passed and there are available places`
-        // );
+        await sendemail(
+          administrator.email,
+          2,
+          `The ${project.projectName} project deadline has passed and there are available places`
+        );
       }
     });
     /////////////////////////////////////////////////////////////////////////
