@@ -4,7 +4,7 @@ import projectrouter from "./routes/projects.js";
 import userRouter from "./routes/users.js";
 import plotrouter from "./routes/plots.js";
 import preferencerouter from "./routes/preferencelist.js";
-import firstcheck, { getDailyCheck } from "./services/dailycheck.js";
+import { firstcheck, getDailyCheck } from "./services/dailycheck.js";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
 import cors from "cors";

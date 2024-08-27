@@ -1,6 +1,7 @@
 import { isValidObjectId } from "mongoose";
 import Project from "../models/Project.js";
 import Administrator from "../models/Administrator.js";
+import PreferenceList from "../models/PreferenceList.js";
 import sendemail from "./sendingemail.js";
 
 export const getDailyCheck = async (req, res) => {
@@ -10,7 +11,8 @@ export const getDailyCheck = async (req, res) => {
       deadline: { $lt: new Date() },
       availablePlaces: 0,
     });
-    // Find all projects that need to be updated
+
+    // Find all projects that need to be updated (set isavailable to false)
     const projects = await Project.find({
       isAvailable: true,
       deadline: { $lt: new Date() },
@@ -27,31 +29,59 @@ export const getDailyCheck = async (req, res) => {
       },
       { isAvailable: false }
     );
+
+    const projecttoalgoids = projecttoalgo.map((project) =>
+      project._id.toString()
+    );
     // Send email to the administrator if the project deadline has passed and there are available places
     projects.map(async (project) => {
-      if (!projecttoalgo.includes(project)) {
+      if (!projecttoalgoids.includes(project._id.toString())) {
+        console.log("send email to administrator");
         const administrator = await Administrator.findById(
           project.administrator
         );
-        await sendemail(
-          administrator.email,
-          2,
-          `The ${project.projectName} project deadline has passed and there are available places`
-        );
+        // await sendemail(
+        //   administrator.email,
+        //   2,
+        //   `The ${project.projectName} project deadline has passed and there are available places`
+        // );
       }
     });
+    /////////////////////////////////////////////////////////////////////////
+    //format data to the algorithm ({clientid, [plotid, plotid, plotid]})
+    const formatteddata = await formatthedata(projecttoalgo);
+    console.log(formatteddata);
+    /////////////////////////////////////////////////////////////////////////
     res.status(200).json(projects);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
 
-const firstcheck = async () => {
+const formatthedata = async (projecttoalgo) => {
+  let formatteddata = [];
+  for (const project of projecttoalgo) {
+    const preferencelist = await PreferenceList.find({
+      projectId: project._id,
+    });
+    for (const preference of preferencelist) {
+      const preferencearray = new Array(preference.preferences.length);
+
+      preference.preferences.forEach((pref) => {
+        preferencearray[pref.preference - 1] = pref.plotid.toString();
+      });
+
+      formatteddata.push([preference.clientid.toString(), preferencearray]);
+    }
+  }
+
+  return formatteddata;
+};
+
+export const firstcheck = async () => {
   try {
     await sendemail("yuvalamar15@gmail.com", 1, "898989");
   } catch (err) {
     console.log(err);
   }
 };
-
-export default firstcheck;
