@@ -51,7 +51,7 @@ const sendemail = async (email, type, password = "0") => {
             from: SYSTEMEMAIL, // Replace with your email
             to: email,
             subject: "matching",
-            text: "you have a matching",
+            text: password,
           };
         }
         break;

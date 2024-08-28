@@ -1,4 +1,4 @@
-import pandas as pd
+# import pandas as pd
 import random
 from collections import deque
 import sys
@@ -154,7 +154,6 @@ def runalgorithemondata(preferences, plots):
 
     # run loop from 0 to r
     for i in range(r):
-        print(f"iteration : {i}")
         # add edges with weight i
         for prefernce in preferences:
             if (len(prefernce[1])>i and
@@ -191,50 +190,40 @@ def runalgorithemondata(preferences, plots):
                 U_i.add(node)
 
         if None not in graph.pairU.values():
-            print(f"we stop here after {i} iteration we found max matching")
-            print(f"size of matching : {max_matching}")
-            print(f"matching : {graph.pairV}")
-            # create dict with number of pairings in each rank
-            sizeofmatch = {}
-            for match in graph.pairV.items():
-                for pref in preferences:
-                    if pref[0] == match[0]:
-                        index = pref[1].index(match[1])
-                        if index + 1 not in sizeofmatch:
-                            sizeofmatch[index + 1] = 0
-                        sizeofmatch[index+1] += 1
-
-            print(f"pairings in each rank : {dict(sorted(sizeofmatch.items()))}")
-            total_sum = sum(key * value for key, value in sizeofmatch.items())
-            print(f"total sum : {total_sum}")
+            outputdata = json.dumps(graph.pairV)
+            print(outputdata)
             return
 
-        print(f"size of matching : {max_matching}")
-        print(f"matching : {graph.pairU}")
-        print(f"E_i : {E_i}")
-        print(f"O_i : {O_i}")
-        print(f"U_i : {U_i}")
-
-
-def readfile():
-    df = pd.read_excel("סימולציה שלישית קמה.xlsx")
-    plots = set()
-    preferences = [(row['family name'], row[1:].tolist()) for _, row in df.iterrows()]
-    for _,plot in preferences:
-        plots.update(plot)
-    return preferences,plots
 
 # preferences = [("aaa", [2, 1, 3, 5, 4]), ("bbb", [1, 2, 3, 4, 5]),
 #           ("ccc", [1, 2, 3, 4, 5]), ("ddd", [1, 2, 3, 4, 5]),
 #            ("eee", [2, 1, 3, 6, 4, 5]), ("fff", [6])]
 # plots = [1, 2, 3, 4, 5, 6]
 
-#preferences,plots = readfile()
-input_data = json.loads(sys.stdin.read())
+
+# //////////////////////////////////////////////////////////
+input_data = sys.stdin.read()
+input_data = json.loads(input_data)
+
+# ////////////////////////////////////////////////////////
+        
+
+# input_data =[
+#     ["66af72682f79fde7d1bc5cbc", ["6693d07cbf243df1b20a1cc0", "6693d09abf243df1b20a1cc2", "6693d0a6bf243df1b20a1cc4"]],
+#     ["66817ab22a7f3aa85275cb45", ["6693d07cbf243df1b20a1cc0", "6693d09abf243df1b20a1cc2", "6693d0a6bf243df1b20a1cc4"]],
+#     ["66c9ddfa984b8fee7baeabdf", ["6693d09abf243df1b20a1cc2", "6693d07cbf243df1b20a1cc0", "6693d0a6bf243df1b20a1cc4"]]
+# ]
 plots = set()
-for _,plot in input_data:
-    plots.update(plot)
-preferences = input_data
+# for _,plot in input_data:
+#     plots.update(plot)
+for plot in input_data:
+    plots.update(plot[1])
+
+# Create the preferences list
+preferences = []
+
+for item in input_data:
+    preferences.append((item[0], item[1]))
+
 runalgorithemondata(preferences,plots)
-createrandommatc(preferences,plots)
 

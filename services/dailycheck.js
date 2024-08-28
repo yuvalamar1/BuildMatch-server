@@ -3,9 +3,12 @@ import { spawn } from "child_process";
 import Project from "../models/Project.js";
 import Administrator from "../models/Administrator.js";
 import PreferenceList from "../models/PreferenceList.js";
+import Client from "../models/Client.js";
+import Plot from "../models/Plot.js";
 import sendemail from "./sendingemail.js";
+import { send } from "process";
 
-export const getDailyCheck = async (req, res) => {
+export const getDailyCheck = async () => {
   try {
     const projecttoalgo = await Project.find({
       isAvailable: true,
@@ -20,7 +23,7 @@ export const getDailyCheck = async (req, res) => {
     });
 
     if (projects.length === 0 && projecttoalgo.length === 0) {
-      return res.status(204).json({ message: "No projects to check" });
+      return console.log("No projects to check");
     }
 
     // Update the projects
@@ -48,21 +51,21 @@ export const getDailyCheck = async (req, res) => {
         );
       }
     });
-    //format data to the algorithm ({clientid, [plotid, plotid, plotid]})
+    //format data to the algorithm ([clientid, [plotid, plotid, plotid]])
     const formatteddata = await formatthedata(projecttoalgo);
     ///////////////////////////////////////////////////////////////////////
     // Execute the Python script
     executePythonScript(formatteddata)
       .then((result) => {
-        console.log("Python script result:", result);
+        sendemailtowinners(result);
       })
       .catch((error) => {
         console.error("Error executing Python script:", error);
       });
+
     /////////////////////////////////////////////////////////////////////////
-    res.status(200).json(projects);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.log(err);
   }
 };
 
@@ -82,14 +85,13 @@ const formatthedata = async (projecttoalgo) => {
       formatteddata.push([preference.clientid.toString(), preferencearray]);
     }
   }
-
   return formatteddata;
 };
 
 const executePythonScript = async (formatteddata) => {
   return new Promise((resolve, reject) => {
     // Spawn the Python process
-    const pythonProcess = spawn("python3", ["thirdchance.py"]);
+    const pythonProcess = spawn("python", ["./services/thirdchance.py"]);
 
     // Pass the formatted data to the Python process via stdin
     pythonProcess.stdin.write(JSON.stringify(formatteddata));
@@ -116,6 +118,20 @@ const executePythonScript = async (formatteddata) => {
       }
     });
   });
+};
+
+const sendemailtowinners = async (result) => {
+  const entries = Object.entries(result);
+  for (const [clientid, plotid] of entries) {
+    const client = await Client.findById(clientid);
+    const plot = await Plot.findById(plotid);
+    const project = await Project.findById(plot.projectId);
+    await sendemail(
+      client.email,
+      3,
+      `Congratulations! You have been selected for the ${plot.plotNumber} plot in the ${project.projectName} project`
+    );
+  }
 };
 
 export const firstcheck = async () => {

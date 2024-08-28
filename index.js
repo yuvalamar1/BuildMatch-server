@@ -6,7 +6,7 @@ import plotrouter from "./routes/plots.js";
 import preferencerouter from "./routes/preferencelist.js";
 import { firstcheck, getDailyCheck } from "./services/dailycheck.js";
 import dotenv from "dotenv";
-import mongoose from "mongoose";
+import mongoose, { get } from "mongoose";
 import cors from "cors";
 import multer from "multer";
 import cron from "node-cron";
@@ -39,9 +39,13 @@ app.use("/preferences", preferencerouter);
 
 // Schedule the cron job to run at 00:01 every day
 
-cron.schedule("43 22 * * *", () => {
-  console.log("Running the daily check");
-  firstcheck();
+cron.schedule("05 00 * * *", () => {
+  try {
+    console.log("Running the daily check");
+    getDailyCheck();
+  } catch (err) {
+    console.log(err);
+  }
 });
 
 app.get("/dailycheck", getDailyCheck);
