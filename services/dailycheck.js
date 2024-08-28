@@ -6,7 +6,6 @@ import PreferenceList from "../models/PreferenceList.js";
 import Client from "../models/Client.js";
 import Plot from "../models/Plot.js";
 import sendemail from "./sendingemail.js";
-import { send } from "process";
 
 export const getDailyCheck = async () => {
   try {
