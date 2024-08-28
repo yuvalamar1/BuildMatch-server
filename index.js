@@ -10,11 +10,28 @@ import mongoose, { get } from "mongoose";
 import cors from "cors";
 import multer from "multer";
 import cron from "node-cron";
+import https from "https";
+import fs from "fs";
+import http from "http";
 
 const app = express();
 app.use(cors());
 dotenv.config();
 const PORT = process.env.PORT || 3000;
+const useHttps = process.env.HTTPS_ENABLED === "true"; //check if the https is enabled
+const SELFKEY = process.env.SELFKEY;
+const SELFCERT = process.env.SELFCERT;
+
+// Middleware to redirect HTTP to HTTPS
+if (useHttps) {
+  app.use((req, res, next) => {
+    if (req.protocol === "http") {
+      res.redirect(301, `https://${req.headers.host}${req.url}`);
+    } else {
+      next();
+    }
+  });
+}
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -68,9 +85,24 @@ mongoose
   .connect(process.env.MONGO_URI)
   .then(() => {
     console.log("Connected to MongoDB");
-    app.listen(PORT, () => {
-      console.log(`Server is running on render or in http://localhost:${PORT}`);
-    });
-  })
 
+    if (useHttps) {
+      // Load the certificate and key only on the Ubuntu server
+      const privateKey = fs.readFileSync(SELFKEY, "utf8");
+      const certificate = fs.readFileSync(SELFCERT, "utf8");
+      const credentials = { key: privateKey, cert: certificate };
+
+      // Create an HTTPS server
+      const httpsServer = https.createServer(credentials, app);
+      httpsServer.listen(PORT, () => {
+        console.log(`HTTPS Server is running on https://localhost:${PORT}`);
+      });
+    } else {
+      // Create an HTTP server for local development
+      const httpServer = http.createServer(app);
+      httpServer.listen(PORT, () => {
+        console.log(`HTTP Server is running on http://localhost:${PORT}`);
+      });
+    }
+  })
   .catch((err) => console.log("Error connecting to MongoDB", err));
