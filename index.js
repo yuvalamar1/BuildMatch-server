@@ -19,8 +19,8 @@ app.use(cors());
 dotenv.config();
 const PORT = process.env.PORT || 3000;
 const useHttps = process.env.HTTPS_ENABLED === "true"; //check if the https is enabled
-const SELFKEY = process.env.SELFKEY;
-const SELFCERT = process.env.SELFCERT;
+// const SELFKEY = process.env.SELFKEY;
+// const SELFCERT = process.env.SELFCERT;
 
 // Middleware to redirect HTTP to HTTPS
 if (useHttps) {
@@ -87,13 +87,8 @@ mongoose
     console.log("Connected to MongoDB");
 
     if (useHttps) {
-      // Load the certificate and key only on the Ubuntu server
-      const privateKey = fs.readFileSync(SELFKEY, "utf8");
-      const certificate = fs.readFileSync(SELFCERT, "utf8");
-      const credentials = { key: privateKey, cert: certificate };
-
-      // Create an HTTPS server
-      const httpsServer = https.createServer(credentials, app);
+      // Use HTTPS server only if HTTPS is enabled
+      const httpsServer = https.createServer(app);
       httpsServer.listen(PORT, () => {
         console.log(`HTTPS Server is running on https://localhost:${PORT}`);
       });
