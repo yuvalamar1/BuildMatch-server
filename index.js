@@ -89,13 +89,13 @@ mongoose
     if (useHttps) {
       // Use HTTPS server only if HTTPS is enabled
       const httpsServer = https.createServer(app);
-      httpsServer.listen(PORT, () => {
+      httpsServer.listen(PORT, "0.0.0.0", () => {
         console.log(`HTTPS Server is running on https://localhost:${PORT}`);
       });
     } else {
       // Create an HTTP server for local development
       const httpServer = http.createServer(app);
-      httpServer.listen(PORT, () => {
+      httpServer.listen(PORT, "0.0.0.0", () => {
         console.log(`HTTP Server is running on http://localhost:${PORT}`);
       });
     }
