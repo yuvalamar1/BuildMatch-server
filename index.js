@@ -10,8 +10,8 @@ import mongoose, { get } from "mongoose";
 import cors from "cors";
 import multer from "multer";
 import cron from "node-cron";
-import https from "https";
-import fs from "fs";
+// import https from "https";
+// import fs from "fs";
 import http from "http";
 
 const app = express();
@@ -86,18 +86,10 @@ mongoose
   .then(() => {
     console.log("Connected to MongoDB");
 
-    if (useHttps) {
-      // Use HTTPS server only if HTTPS is enabled
-      const httpsServer = https.createServer(app);
-      httpsServer.listen(PORT, "0.0.0.0", () => {
-        console.log(`HTTPS Server is running on https://localhost:${PORT}`);
-      });
-    } else {
-      // Create an HTTP server for local development
-      const httpServer = http.createServer(app);
-      httpServer.listen(PORT, "0.0.0.0", () => {
-        console.log(`HTTP Server is running on http://localhost:${PORT}`);
-      });
-    }
+    // Create an HTTP server for local development
+    const httpServer = http.createServer(app);
+    httpServer.listen(PORT, () => {
+      console.log(`HTTP Server is running on http://localhost:${PORT}`);
+    });
   })
   .catch((err) => console.log("Error connecting to MongoDB", err));
