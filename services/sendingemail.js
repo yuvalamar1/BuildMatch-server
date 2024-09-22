@@ -28,7 +28,7 @@ const sendemail = async (email, type, password = "0") => {
       case 1:
         {
           mailOptions = {
-            from: SYSTEMEMAIL, // Replace with your email
+            from: SYSTEMEMAIL,
             to: email,
             subject: "reset password",
             text: "your new password is: " + password,
@@ -38,7 +38,7 @@ const sendemail = async (email, type, password = "0") => {
       case 2:
         {
           mailOptions = {
-            from: SYSTEMEMAIL, // Replace with your email
+            from: SYSTEMEMAIL,
             to: email,
             subject: "change deadline",
             text: password,
@@ -48,7 +48,7 @@ const sendemail = async (email, type, password = "0") => {
       case 3:
         {
           mailOptions = {
-            from: SYSTEMEMAIL, // Replace with your email
+            from: SYSTEMEMAIL,
             to: email,
             subject: "matching",
             text: password,

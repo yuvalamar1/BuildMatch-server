@@ -54,14 +54,15 @@ export const getDailyCheck = async () => {
     const formatteddata = await formatthedata(projecttoalgo);
     ///////////////////////////////////////////////////////////////////////
     // Execute the Python script
-    executePythonScript(formatteddata)
-      .then((result) => {
-        sendemailtowinners(result);
-      })
-      .catch((error) => {
-        console.error("Error executing Python script:", error);
-      });
-
+    if (formatteddata && formatteddata.length > 0) {
+      executePythonScript(formatteddata)
+        .then((result) => {
+          sendemailtowinners(result);
+        })
+        .catch((error) => {
+          console.error("Error executing Python script:", error);
+        });
+    }
     /////////////////////////////////////////////////////////////////////////
   } catch (err) {
     console.log(err);
@@ -135,7 +136,7 @@ const sendemailtowinners = async (result) => {
 
 export const firstcheck = async () => {
   try {
-    await sendemail("yuvalamar15@gmail.com", 1, "898989");
+    await sendemail("yuvalamar15@gmail.com", 2, "898989");
   } catch (err) {
     console.log(err);
   }
