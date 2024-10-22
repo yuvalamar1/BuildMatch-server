@@ -11,17 +11,26 @@ const SYSTEMEMAIL = process.env.SYSTEM_EMAIL;
 const sendemail = async (email, type, password = "0") => {
   try {
     // Set up email transporter
+    // const transporter = nodemailer.createTransport({
+    //   //   service: "smtp.mailfence.com",
+    //   host: "smtp-mail.outlook.com",
+    //   port: 587,
+    //   secure: true,
+    //   auth: {
+    //     user: SYSTEMEMAIL, // Replace with your email
+    //     pass: PASSWORD, // Replace with your email password
+    //   },
+    // });
     const transporter = nodemailer.createTransport({
       //   service: "smtp.mailfence.com",
-      host: "smtp-mail.outlook.com",
-      port: 587,
-      secure: false,
+      host: "smtp.gmail.com",
+      port: 465,
+      secure: true,
       auth: {
         user: SYSTEMEMAIL, // Replace with your email
         pass: PASSWORD, // Replace with your email password
       },
     });
-
     let mailOptions;
     // Email options
     switch (type) {

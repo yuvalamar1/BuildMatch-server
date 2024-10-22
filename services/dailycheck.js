@@ -91,7 +91,7 @@ const formatthedata = async (projecttoalgo) => {
 const executePythonScript = async (formatteddata) => {
   return new Promise((resolve, reject) => {
     // Spawn the Python process
-    const pythonProcess = spawn("python", ["./services/thirdchance.py"]);
+    const pythonProcess = spawn("python", ["./services/realone.py"]);
 
     // Pass the formatted data to the Python process via stdin
     pythonProcess.stdin.write(JSON.stringify(formatteddata));
